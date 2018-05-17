@@ -8,57 +8,35 @@ library(mapproj)
 library(rgdal)
 library(rgeos)
 library(maptools)
+
+#packages voor libraries installeren 
 install.packages("gpclib", type="source")
 install.packages("gpclib")
 install.packages("rgeos")
 install.packages('rgdal', type='source')
-gpclibPermit()
-
 install.packages("mapproj")
 install.packages("maptools")
+#kaart spatialpolygonsdataframe inladen
 NLD <- readRDS("~/zorgkosten db4/maps/gadm36_NLD_2_sp.rds")
 
-plot(NLD)
-
-NLD@data %>% as_tibble()
-NLD@data %>% tail(2)
-
-NLD@polygons %>% length()
-## [1] 491
-NLD@polygons[[10]] %>% # read the tenth object 
-  slotNames()  # and give me the slotnames 
-
-ggplot()+
-  geom_polygon(data = NLD, 
-               aes(x = long, y = lat, group = group)) +
-  coord_fixed()
-
-ggplot()+
-  geom_polygon(data = NLD, aes(x = long, y = lat, group = group)) +
-  coord_map()
-
-ggplot()+
-  geom_polygon(data = NLD, aes(x = long, y = lat, group = group)) +
-  coord_map()
-
-NLD@data$NAME_2 %>%  unique()
-
+#ijsselmeer en zeeuwsemeren eruit halen
 NLD_fixed <- subset(NLD, !NLD$NAME_1  %in% c("Zeeuwse meren", "IJsselmeer"))
 NLD_fixed <- fortify(NLD_fixed,region="NAME_2")
-#NLD_fixed <- merge(fortify(NLD_fixed), as.data.frame(NLD_fixed), by.x="id", by.y=0)
 
-NLD_IDK@data$id %>% unique()
+#zorgkosten berekenen, opgedeeld in verschillende variabelen omdat het anders te lang werd, misschien opdelen en categorien die bij elkaar passen.
+zg <- zorgkosten
+zg$total1 <- zg$KOSTEN_EERSTELIJNS_ONDERSTEUNING + zg$KOSTEN_MEDISCH_SPECIALISTISCHE_ZORG + zg$KOSTEN_FARMACIE + zg$KOSTEN_GENERALISTISCHE_BASIS_GGZ + zg$KOSTEN_HUISARTS_INSCHRIJFTARIEF + zg$KOSTEN_GERIATRISCHE_REVALIDATIEZORG
+zg$total2 <- zg$KOSTEN_GRENSOVERSCHRIJDENDE_ZORG + zg$KOSTEN_HUISARTS_CONSULT + zg$KOSTEN_HUISARTS_MDZ + zg$KOSTEN_HUISARTS_OVERIG + zg$KOSTEN_HULPMIDDELEN + zg$KOSTEN_KRAAMZORG + zg$KOSTEN_LANGDURIGE_GGZ + zg$KOSTEN_MEDISCH_SPECIALISTISCHE_ZORG 
+zg$total3 <- zg$KOSTEN_MEDISCH_SPECIALISTISCHE_ZORG + zg$KOSTEN_MONDZORG + zg$KOSTEN_OVERIG + zg$KOSTEN_PARAMEDISCHE_ZORG_FYSIOTHERAPIE + zg$KOSTEN_PARAMEDISCHE_ZORG_OVERIG + zg$KOSTEN_SPECIALISTISCHE_GGZ + zg$KOSTEN_VERLOSKUNDIGE_ZORG + zg$KOSTEN_VERPLEGING_EN_VERZORGING + zg$KOSTEN_ZIEKENVERVOER_LIGGEND +  zg$KOSTEN_ZIEKENVERVOER_ZITTEND
+#alles bij elkaar
+zg$totalpp <- (zg$total1 + zg$total2 + zg$total3) / zg$AANTAL_BSN
+#alle leeftijd en geslachten bij elkaar
+zg2 <- zg %>% 
+  select(gemeente = GEMEENTENAAM, totalpp = totalpp, aantal = AANTAL_BSN, leeftijd = LEEFTIJDSKLASSE, geslacht = GESLACHT) %>% 
+  filter(!is.na(gemeente))
 
-ggplot(NLD_fixed) +
-  geom_polygon( aes(x = long, y = lat, group = group))+
-  coord_map()
+zg3 <- aggregate(totalpp ~ gemeente, data=zg2, mean)
 
-ggplot(NLD_fixed) +
-  theme_minimal()+  # no backgroundcolor
-  geom_polygon( aes(x = long, y = lat, group = group),
-                color = "white",   # color is the lines of the region
-                fill = "#9C9797")+ # fill is the fill of every polygon.
-  coord_map()
 test <- zg3 %>% 
   select(gemeente = gemeente, number = totalpp)%>% filter(!is.na(number))
 
@@ -77,27 +55,6 @@ ggplot(final_map)+
   coord_map()+
   scale_fill_distiller(name = "zorgkosten per gemeente", # change titel legend
                        palette = "Spectral")+ # change the color scheme
-  theme(legend.position = "bottom")  # chagne the legend position
+  #theme(legend.position = "bottom",  legend.text = element_text(vjust = 45))+  # chagne the legend position
+  labs(title="gemiddelde zorgkosten p.p. per gemeente",  caption="Bron: vektis")
 
-
-NLD %>%  length()
-NLD_fix <- toupper(NLD_fixed$id)
-
-NLD@data$CC_2
-
-
-zg <- zorgkosten
-zg$total1 <- zg$KOSTEN_EERSTELIJNS_ONDERSTEUNING + zg$KOSTEN_MEDISCH_SPECIALISTISCHE_ZORG + zg$KOSTEN_FARMACIE + zg$KOSTEN_GENERALISTISCHE_BASIS_GGZ + zg$KOSTEN_HUISARTS_INSCHRIJFTARIEF + zg$KOSTEN_GERIATRISCHE_REVALIDATIEZORG
-zg$total2 <- zg$KOSTEN_GRENSOVERSCHRIJDENDE_ZORG + zg$KOSTEN_HUISARTS_CONSULT + zg$KOSTEN_HUISARTS_MDZ + zg$KOSTEN_HUISARTS_OVERIG + zg$KOSTEN_HULPMIDDELEN + zg$KOSTEN_KRAAMZORG + zg$KOSTEN_LANGDURIGE_GGZ + zg$KOSTEN_MEDISCH_SPECIALISTISCHE_ZORG 
-zg$total3 <- zg$KOSTEN_MEDISCH_SPECIALISTISCHE_ZORG + zg$KOSTEN_MONDZORG + zg$KOSTEN_OVERIG + zg$KOSTEN_PARAMEDISCHE_ZORG_FYSIOTHERAPIE + zg$KOSTEN_PARAMEDISCHE_ZORG_OVERIG + zg$KOSTEN_SPECIALISTISCHE_GGZ + zg$KOSTEN_VERLOSKUNDIGE_ZORG + zg$KOSTEN_VERPLEGING_EN_VERZORGING + zg$KOSTEN_ZIEKENVERVOER_LIGGEND +  zg$KOSTEN_ZIEKENVERVOER_ZITTEND
-
-zg$totalpp <- (zg$total1 + zg$total2 + zg$total3) / zg$AANTAL_BSN
-
-zg2 <- zg %>% 
-  select(gemeente = GEMEENTENAAM, totalpp = totalpp, aantal = AANTAL_BSN, leeftijd = LEEFTIJDSKLASSE, geslacht = GESLACHT) %>% 
-  filter(!is.na(gemeente))
-sumOfAll <- sum(zg2)
-
-zg2 <- data.frame(aggregate(totalpp ~ gemeente, data=zg2, mean))
-
-zg3 <- aggregate(totalpp ~ gemeente, data=zg2, mean)
