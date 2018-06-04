@@ -8,16 +8,8 @@ library(rgdal)
 library(rgeos)
 library(maptools)
 
-#packages voor libraries installeren 
-install.packages("sp")
-install.packages("gpclib", type="source")
-install.packages("gpclib")
-install.packages("rgeos")
-install.packages('rgdal', type='source')
-install.packages("mapproj")
-install.packages("maptools")
 #kaart spatialpolygonsdataframe inladen
-NLD <- readRDS("~/zorgkosten db4/maps/gadm36_NLD_2_sp.rds")
+NLD <- readRDS("maps/gadm36_NLD_2_sp.rds")
 #zorgkosten inladen
 zorgkosten <- read_delim("datasets/Vektis Open Databestand Zorgverzekeringswet 2015 - gemeente (3).csv",";", escape_double = FALSE, trim_ws = TRUE)
 #ijsselmeer en zeeuwsemeren eruit halen
