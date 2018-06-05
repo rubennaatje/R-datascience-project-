@@ -1,0 +1,46 @@
+!table
+!version 1000
+!charset WindowsLatin1
+
+Definition Table
+  Type NATIVE Charset "WindowsLatin1"
+  Fields 34
+    CBSCODE Char (6) Index 1 ;
+    Gemeentenaam Char (30) Index 2 ;
+    Inwoners Float ;
+    Mannen Float ;
+    Vrouwen Float ;
+    inw_jonger_dan_5j Float ;
+    inw_5_9j Float ;
+    inw_10_14j Float ;
+    inw_15_19j Float ;
+    inw_20_24j Float ;
+    inw_25_44j Float ;
+    inw_45_64j Float ;
+    inw_65_79j Float ;
+    inw_80j_en_ouder Float ;
+    Dem_druk_tot Float ;
+    Dem_druk_groen Float ;
+    Dem_druk_grijs Float ;
+    Oppervlakte Float ;
+    Land Float ;
+    Binnenwater Float ;
+    Buitenwater Float ;
+    Bevolkingsdichtheid Float ;
+    Landsdeel_code Char (8) ;
+    Landsdeel_naam Char (30) ;
+    Provincie_code Char (8) ;
+    Provincie_naam Char (26) ;
+    COROP_gebied_code Char (8) ;
+    COROP_gebied_naam Char (70) ;
+    Veiligheidsregio_code Char (8) ;
+    Veiligheidsregio_naam Char (50) ;
+    Gr_sted_aggl_code Char (8) ;
+    Gr_sted_aggl_naam Char (66) ;
+    Stadsgewest_code Char (8) ;
+    Stadsgewest_naam Char (32) ;
+begin_metadata
+"\IsReadOnly" = "FALSE"
+"\MapInfo" = ""
+"\MapInfo\TableID" = "3e2ad8e7-03dc-4497-8ebf-6a778062f1be"
+end_metadata
