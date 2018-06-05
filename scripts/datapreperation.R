@@ -3,7 +3,7 @@ library(readr)
 regios <- read_delim("datasets/82949NED_TypedDataSet_17052018_142705.csv", ";", escape_double = FALSE, trim_ws = TRUE)
 #voeg criminaliteit toe aan regios
 criminaliteit <- read_delim("datasets/criminaliteit.csv",";", escape_double = FALSE, col_types = cols(GeregistreerdeMisdrijvenPer1000Inw_3 = col_number()),  trim_ws = TRUE)
-compleet <- left_join(criminaliteit, regios, by="RegioS") %>% filter(!is.na(GeregistreerdeMisdrijvenPer1000Inw_3)&GeregistreerdeMisdrijvenPer1000Inw_3 != ".")
+compleet <- left_join(regios,criminaliteit, by="RegioS") %>% filter(!is.na(GeregistreerdeMisdrijvenPer1000Inw_3)&GeregistreerdeMisdrijvenPer1000Inw_3 != ".")
 compleet$SoortMisdrijf <- NULL
 compleet$Perioden <- NULL
 
@@ -23,10 +23,19 @@ zg <- zg %>%
 zg <- aggregate(totalpp ~ gemeente, data=zg, mean)
 
 zg <- zg %>% 
-  select(gemeente = gemeente, number = totalpp)%>% filter(!is.na(number))
+  select(gemeente = gemeente, zorgkosten = totalpp)%>% filter(!is.na(zorgkosten))
 
 
 compleet$gemeente <- compleet$Naam_2
 compleet <- compleet %>%  mutate(gemeente = toupper(gemeente))%>% 
   left_join(zorgkostentotaal ,by = "gemeente")
 
+#voeg kerncijfers toe aan regios
+kerncijfers <- read_delim("datasets/70072ned_UntypedDataSet_06062018_000805.csv", 
+                          ";", escape_double = FALSE, trim_ws = TRUE)
+compleet <- left_join(compleet, kerncijfers  ,by="RegioS")
+
+#haal onnodige dingen weg
+compleet$ID.x <- NULL
+compleet$ID.y <- NULL
+compleet$ID <- NULL
