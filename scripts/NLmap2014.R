@@ -9,7 +9,9 @@ library(maptools)
 library(readr)
 library(magrittr)
 library(tmap)
+library(ggthemes)
 install.packages("tmap")
+install.packages("ggthemes")
 #Gemeentekaart inladen
 NLD <- readOGR(dsn = "maps/NL_Gemeenten2014", layer = "NL_Gemeenten2014")
 NLD@data$Gemeentenaam <- as.character(NLD@data$Gemeentenaam)
@@ -59,9 +61,9 @@ map <- ggplot() +
   geom_polygon(data = final_map, 
             aes(x = long, y = lat, group = group, fill = number),
             color = 'gray')+
+  theme_minimal()+
   scale_fill_distiller(name = "zorgkosten per gemeente", # change titel legend
                        palette = "Spectral") # change the color scheme
-
 
 print(map) 
 
