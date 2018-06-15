@@ -10,9 +10,9 @@ plot(NLD_FORT, col = "darkgreen", border = "lightgray")
 #!!!!!!!!!!!!!!!!!!!!zorg dat je alle regels vanuit dataprepartion.R hebt uitgevoerd!!!!!!!!!!!!!!!!!!!!!!!
 #Hieronder een voorbeeld van hoe je de data relatief zet aan het aantal inwoners.
 #compleet$aantal <- (compleet$HogerBeroepsonderwijs_106 / compleet$GemiddeldAantalInwoners_81)
-compleet$aantal <- (compleet$TotaalNietWesterseMigratieachtergrond_37 / compleet$GemiddeldAantalInwoners_81)
+compleet$aantal <- ((compleet$Geiten_178 / compleet$InwonersOp31December_78) * 100 )
 test <- compleet %>% 
-  select(gemeente = gemeente, number = aantal)%>% filter(!is.na(number))
+  select(gemeente = gemeente, number = zorgkosten)%>% filter(!is.na(number))
 
 names_and_numbers <- data_frame(id=rownames(NLD@data), gemeente=NLD@data$Gemeentenaam)  %>% 
   mutate(gemeente = toupper(gemeente)) %>% 
@@ -26,9 +26,9 @@ map <- ggplot() +
                aes(x = long, y = lat, group = group, fill = number),
                color = 'gray')+
   theme_minimal()+
-  scale_fill_distiller(name = "Percentage ", # change titel legend
+  scale_fill_distiller(name = "Zorgkosten was ", # change titel legend
                        palette = "Spectral")+ # change the color scheme
-  labs(title="Niet Westerse Migratie Achtergronden",  caption="Bron: cbs")
+  labs(title="geiten Per Gemeente",  caption="Bron: cbs")
 
 print(map) 
 

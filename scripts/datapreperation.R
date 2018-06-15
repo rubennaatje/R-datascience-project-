@@ -28,7 +28,7 @@ zg <- zg %>%
 
 compleet$gemeente <- compleet$Naam_2
 compleet <- compleet %>%  mutate(gemeente = toupper(gemeente))%>% 
-  left_join(zorgkostentotaal ,by = "gemeente")
+  left_join(zg ,by = "gemeente")
 
 #voeg kerncijfers toe aan regios
 kerncijfers <- read_delim("datasets/70072ned_UntypedDataSet_06062018_000805.csv", 
@@ -39,3 +39,13 @@ compleet <- left_join(compleet, kerncijfers  ,by="RegioS")
 compleet$ID.x <- NULL
 compleet$ID.y <- NULL
 compleet$ID <- NULL
+
+#xd 
+compleet$hartziektes <- ((compleet$ZiektenVanHartEnVaatstelsel_65 / compleet$InwonersOp31December_78) * 100 )
+compleet$inkomenXD <- ((compleet$InkomenUitArbeid_141 / compleet$InwonersOp31December_78) * 100 )
+compleet$uitkeringen <- ((compleet$UitkeringsontvangersTotaal_156 / compleet$InwonersOp31December_78) * 100 )
+compleet$waouitkeringen <- ((compleet$WAOUitkering_164 / compleet$InwonersOp31December_78) * 100 )
+compleet$bol <- ((compleet$BeroepsopleidendeLeerweg_104 / compleet$InwonersOp31December_78) * 100 )
+compleet$bbl <- ((compleet$BeroepsbegeleidendeLeerweg_105 / compleet$InwonersOp31December_78) * 100 )
+compleet$hbo <- ((compleet$HogerBeroepsonderwijsBachelor_110 / compleet$InwonersOp31December_78) * 100 )
+compleet$weduwss <- ((compleet$Verweduwd_28 / compleet$InwonersOp31December_78) * 100 )

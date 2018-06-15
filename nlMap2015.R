@@ -13,3 +13,5 @@ plot(ams.spdf, pch = 19, col = "blue", axes = TRUE, main = "Enkele bezienswaardi
 text(coordinates(ams.spdf), as.character(ams.spdf$Name), cex = .7, pos = pos.vector, col = "blue")
 proj4string(ams.spdf) <-CRS("+init=epsg:28992")
 
+
+
